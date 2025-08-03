@@ -1,0 +1,20 @@
+{
+    "name": "pdf-summarizer-node",
+    "version": "1.0.0",
+    "description": "PDF summarizer using RAG with Node.js",
+    "main": "summarizer.js",
+    "type": "module",
+    "scripts": {
+      "start": "node summarizer.js",
+      "install-deps": "npm install"
+    },
+    "dependencies": {
+      "pdfjs-dist": "^4.0.269",
+      "ollama": "^0.5.0",
+      "xlsx": "^0.18.5",
+      "fs-extra": "^11.2.0"
+    },
+    "keywords": ["pdf", "summarizer", "rag", "ollama", "ai"],
+    "author": "",
+    "license": "MIT"
+  }
