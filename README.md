@@ -14,8 +14,6 @@ Install Ollama
 https://ollama.com/
 ```
 
-Install pdfjs-dist
-
 ### Usage
 
 ```bash
