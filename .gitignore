@@ -1,5 +1,5 @@
-input/*
-output_rag/*
+src/input/*
+src/output_rag/*
 node_modules/*
 
 
