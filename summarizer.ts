@@ -6,6 +6,7 @@ import XLSX from 'xlsx';
 
 // PDF.js import
 import * as pdfjs from 'pdfjs-dist/legacy/build/pdf.mjs';
+import type { TextItem } from 'pdfjs-dist/types/src/display/api';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,7 +17,7 @@ const ollama = new Ollama();
 /**
  * Simple text-based similarity using TF-IDF-like approach
  */
-function calculateTextSimilarity(text1, text2) {
+function calculateTextSimilarity(text1: string, text2: string) {
   const words1 = text1
     .toLowerCase()
     .split(/\W+/)
@@ -35,7 +36,10 @@ function calculateTextSimilarity(text1, text2) {
     (word) => words2.filter((w) => w === word).length
   );
 
-  const dotProduct = vector1.reduce((sum, val, i) => sum + val * vector2[i], 0);
+  const dotProduct = vector1.reduce(
+    (sum, val, i) => sum + val * (vector2?.[i] || 0),
+    0
+  );
   const norm1 = Math.sqrt(vector1.reduce((sum, val) => sum + val * val, 0));
   const norm2 = Math.sqrt(vector2.reduce((sum, val) => sum + val * val, 0));
 
@@ -45,7 +49,7 @@ function calculateTextSimilarity(text1, text2) {
 /**
  * Extract text from PDF using pdfjs-dist
  */
-async function extractTextFromPDF(filePath) {
+async function extractTextFromPDF(filePath: string) {
   try {
     const buffer = await fs.readFile(filePath);
     // Convert Buffer to Uint8Array
@@ -56,7 +60,9 @@ async function extractTextFromPDF(filePath) {
     for (let i = 1; i <= doc.numPages; i++) {
       const page = await doc.getPage(i);
       const textContent = await page.getTextContent();
-      const pageText = textContent.items.map((item) => item.str).join(' ');
+      const pageText = textContent.items
+        .map((item) => (item as TextItem).str)
+        .join(' ');
       text += pageText + '\n';
     }
 
@@ -70,7 +76,7 @@ async function extractTextFromPDF(filePath) {
 /**
  * Read file content from .txt or .pdf
  */
-async function readFile(filePath) {
+async function readFile(filePath: string) {
   const ext = path.extname(filePath).toLowerCase();
 
   if (ext === '.txt') {
@@ -85,7 +91,7 @@ async function readFile(filePath) {
 /**
  * Remove sections like 'Bibliography' or 'References' if present
  */
-function cleanText(text) {
+function cleanText(text: string) {
   const match = text.match(/(Bibliography|References)/i);
   return match ? text.substring(0, match.index) : text;
 }
@@ -93,7 +99,7 @@ function cleanText(text) {
 /**
  * Split text into smaller chunks; for RAG, shorter chunks are easier to retrieve
  */
-function chunkText(text, maxChunkLength = 2500) {
+function chunkText(text: string, maxChunkLength = 2500) {
   const paragraphs = text.split('\n');
   const chunks = [];
   let currentChunk = '';
@@ -119,7 +125,7 @@ function chunkText(text, maxChunkLength = 2500) {
 /**
  * Retrieve top_k chunks that are most similar to the query using text similarity
  */
-function retrieveRelevantChunks(query, chunks, topK = 3) {
+function retrieveRelevantChunks(query: string, chunks: string[], topK = 3) {
   const similarities = chunks.map((chunk) => ({
     chunk,
     similarity: calculateTextSimilarity(query, chunk),
@@ -134,7 +140,11 @@ function retrieveRelevantChunks(query, chunks, topK = 3) {
 /**
  * Given a document and a query, retrieve top relevant chunks and use them to prompt the LLM
  */
-async function ragSummarize(documentText, query, language = 'português') {
+async function ragSummarize(
+  documentText: string,
+  query: string,
+  language = 'português'
+) {
   const cleanedText = cleanText(documentText);
   const chunks = chunkText(cleanedText);
   console.log(`Document split into ${chunks.length} chunks.`);
@@ -161,9 +171,9 @@ async function ragSummarize(documentText, query, language = 'português') {
  * save the summary as a .txt file, and return [filename, summary]
  */
 async function processFile(
-  filePath,
-  outputFolder,
-  query,
+  filePath: string,
+  outputFolder: string,
+  query: string,
   language = 'português'
 ) {
   try {

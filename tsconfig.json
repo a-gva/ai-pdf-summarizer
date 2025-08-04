@@ -1,0 +1,46 @@
+{
+    "compilerOptions": {
+      /* Base Options: */
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "target": "es2022",
+      "allowJs": true,
+      "resolveJsonModule": true,
+      "moduleDetection": "force",
+      "isolatedModules": true,
+  
+      /* Strictness */
+      "strict": true,
+      "noUncheckedIndexedAccess": true,
+      "checkJs": true,
+  
+      /* Bundled projects */
+      "lib": ["dom", "dom.iterable", "ES2022"],
+      "noEmit": true,
+      "module": "esnext",
+      "moduleResolution": "bundler",
+      "jsx": "preserve",
+      "plugins": [],
+      "incremental": true,
+  
+      /* Path Aliases */
+      "paths": {
+        "~/*": ["./src/*"]
+      },
+      "types": []
+    },
+    "include": [
+      ".eslint.config.mjs",
+      "next-env.d.ts",
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.cjs",
+      "**/*.js",
+      ".next/types/**/*.ts",
+      "src/lib/utils/rules/process-rules.test.ts",
+      "next.config.mjs",
+      "src/lib/env/index.ts",
+    ],
+    "exclude": ["node_modules", "coverage"]
+  }
+  
